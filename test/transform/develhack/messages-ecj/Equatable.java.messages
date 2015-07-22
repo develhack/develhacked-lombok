@@ -1,0 +1,2 @@
+19 Generating equals/hashCode with a supercall to java.lang.Object is pointless.
+24 Generating equals/hashCode with a supercall to java.lang.Object is pointless.

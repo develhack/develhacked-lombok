@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -13,9 +14,12 @@
    height="56.760002"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.91pre4 r13712"
    sodipodi:docname="lombokText.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\Users\suk2\git\develhacked-lombok\src\installer\lombok\installer\lombokText.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <metadata
      id="metadata2527">
     <rdf:RDF>
@@ -28,8 +32,8 @@
     </rdf:RDF>
   </metadata>
   <sodipodi:namedview
-     inkscape:window-height="713"
-     inkscape:window-width="640"
+     inkscape:window-height="1027"
+     inkscape:window-width="1920"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      guidetolerance="10.0"
@@ -41,11 +45,12 @@
      id="base"
      showgrid="false"
      inkscape:zoom="1"
-     inkscape:cx="194.15432"
-     inkscape:cy="205"
-     inkscape:window-x="365"
-     inkscape:window-y="58"
-     inkscape:current-layer="svg2" />
+     inkscape:cx="425.54687"
+     inkscape:cy="214.6443"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:current-layer="svg2"
+     inkscape:window-maximized="1" />
   <defs
      id="defs4">
     <inkscape:perspective
@@ -64,4 +69,16 @@
        id="flowRoot2383"
        style="font-size:110px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bank Gothic;-inkscape-font-specification:Bank Gothic" />
   </g>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:27.94032478px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     x="19.316864"
+     y="42.490952"
+     id="text4135"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan4137"
+       x="19.316864"
+       y="42.490952"
+       style="font-weight:bold;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">featuring Develhack.com</tspan></text>
 </svg>

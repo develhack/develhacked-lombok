@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.projectlombok</groupId>
-	<artifactId>lombok</artifactId>
+	<groupId>com.develhack</groupId>
+	<artifactId>develhacked-lombok</artifactId>
 	<packaging>jar</packaging>
 	<version>@VERSION@</version>
-	<name>Project Lombok</name>
-	<url>http://projectlombok.org</url>
-	<description>Spice up your java: Automatic Resource Management, automatic generation of getters, setters, equals, hashCode and toString, and more!</description>
+	<name>Develhacked-Lombok</name>
+	<url>https://github.com/develhack/develhacked-lombok</url>
+	<description>A library enhancing Java classes at compilation by annotations that contained in the Develhack Core Library.</description>
 	<dependencies></dependencies>
 	<licenses>
 		<license>
@@ -17,31 +17,20 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git://github.com/rzwitserloot/lombok.git</connection>
-		<url>http://github.com/rzwitserloot/lombok</url>
+		<connection>https://github.com/develhack/develhacked-lombok.git</connection>
+		<url>https://github.com/develhack/develhacked-lombok</url>
 	</scm>
 	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/projectlombok/issues</url>
+		<system>GitHub</system>
+		<url>https://github.com/develhack/develhacked-lombok/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>
-			<id>rzwitserloot</id>
-			<name>Reinier Zwitserloot</name>
-			<email>reinier@projectlombok.org</email>
-			<url>http://zwitserloot.com</url>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>rspilker</id>
-			<name>Roel Spilker</name>
-			<email>roel@projectlombok.org</email>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>rgrootjans</id>
-			<name>Robbert Jan Grootjans</name>
-			<timezone>+1</timezone>
+			<id>suk2</id>
+			<name>Yosuke Otsuka</name>
+			<email>yosuke.otsuka@develhack.com</email>
+			<url>https://github.com/suk2</url>
+			<timezone>+9</timezone>
 		</developer>
 	</developers>
 </project>

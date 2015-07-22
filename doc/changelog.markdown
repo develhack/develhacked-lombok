@@ -1,3 +1,11 @@
+Develhacked-Lombok Changelog
+----------------------------
+
+### v0.1.0
+
+* Initial release
+
+
 Lombok Changelog
 ----------------
 

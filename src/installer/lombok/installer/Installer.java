@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2009-2010 The Project Lombok Authors.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -56,9 +56,9 @@ import com.zwitserloot.cmdreader.Shorthand;
  * and looks in some common places on Mac OS X, Linux and Windows.
  */
 public class Installer {
-	static final URI ABOUT_LOMBOK_URL = URI.create("http://projectlombok.org");
+	static final URI ABOUT_LOMBOK_URL = URI.create("https://github.com/develhack/develhacked-lombok");
 	static final List<IdeLocationProvider> locationProviders;
-	
+
 	static {
 		List<IdeLocationProvider> list = new ArrayList<IdeLocationProvider>();
 		try {
@@ -70,7 +70,7 @@ public class Installer {
 		}
 		locationProviders = Collections.unmodifiableList(list);
 	}
-	
+
 	static List<Pattern> getIdeExecutableNames() {
 		OS os = IdeFinder.getOS();
 		List<Pattern> list = new ArrayList<Pattern>();
@@ -80,16 +80,16 @@ public class Installer {
 		}
 		return list;
 	}
-	
+
 	static IdeLocation tryAllProviders(String location) throws CorruptedIdeLocationException {
 		for (IdeLocationProvider provider : locationProviders) {
 			IdeLocation loc = provider.create(location);
 			if (loc != null) return loc;
 		}
-		
+
 		return null;
 	}
-	
+
 	static void autoDiscover(List<IdeLocation> locations, List<CorruptedIdeLocationException> problems) {
 		try {
 			for (IdeFinder finder : SpiLoadUtil.findServices(IdeFinder.class)) {
@@ -99,7 +99,7 @@ public class Installer {
 			throw Lombok.sneakyThrow(e);
 		}
 	}
-	
+
 	public static boolean isSelf(String jar) {
 		String self = ClassRootFinder.findClassRootOfClass(Installer.class);
 		if (self == null) return false;
@@ -109,62 +109,62 @@ public class Installer {
 		try { b = b.getCanonicalFile(); } catch (IOException ignore) {}
 		return a.equals(b);
 	}
-	
+
 	@ProviderFor(LombokApp.class)
 	public static class GraphicalInstallerApp extends LombokApp {
 		@Override public String getAppName() {
 			return "installer";
 		}
-		
+
 		@Override public String getAppDescription() {
 			return "Runs the graphical installer tool (default).";
 		}
-		
+
 		@Override public List<String> getAppAliases() {
 			return Arrays.asList("");
 		}
-		
+
 		@Override public int runApp(List<String> args) throws Exception {
 			return guiInstaller();
 		}
 	}
-	
+
 	@ProviderFor(LombokApp.class)
 	public static class CommandLineInstallerApp extends LombokApp {
 		@Override public String getAppName() {
 			return "install";
 		}
-		
+
 		@Override public String getAppDescription() {
 			return "Runs the 'handsfree' command line scriptable installer.";
 		}
-		
+
 		@Override public int runApp(List<String> args) throws Exception {
 			return cliInstaller(false, args);
 		}
 	}
-	
+
 	@ProviderFor(LombokApp.class)
 	public static class CommandLineUninstallerApp extends LombokApp {
 		@Override public String getAppName() {
 			return "uninstall";
 		}
-		
+
 		@Override public String getAppDescription() {
 			return "Runs the 'handsfree' command line scriptable uninstaller.";
 		}
-		
+
 		@Override public int runApp(List<String> args) throws Exception {
 			return cliInstaller(true, args);
 		}
 	}
-	
+
 	private static int guiInstaller() {
 		if (IdeFinder.getOS() == OS.MAC_OS_X) {
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Lombok Installer");
 			System.setProperty("com.apple.macos.use-file-dialog-packages", "true");
 		}
-		
+
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -172,14 +172,14 @@ public class Installer {
 						try {
 							UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 						} catch (Exception ignore) {}
-						
+
 						new InstallerGUI().show();
 					} catch (HeadlessException e) {
 						printHeadlessInfo();
 					}
 				}
 			});
-			
+
 			synchronized (InstallerGUI.exitMarker) {
 				while (!Thread.interrupted() && InstallerGUI.exitMarker.get() == null) {
 					try {
@@ -196,17 +196,17 @@ public class Installer {
 			return 1;
 		}
 	}
-	
+
 	private static class CmdArgs {
 		@Description("Specify paths to a location to install/uninstall. Use 'auto' to apply to all automatically discoverable installations.")
 		@Sequential
 		List<String> path = new ArrayList<String>();
-		
+
 		@Shorthand({"h", "?"})
 		@Description("Shows this help text")
 		boolean help;
 	}
-	
+
 	public static int cliInstaller(boolean uninstall, List<String> rawArgs) {
 		CmdReader<CmdArgs> reader = CmdReader.of(CmdArgs.class);
 		CmdArgs args;
@@ -218,24 +218,24 @@ public class Installer {
 			System.err.println(generateCliHelp(uninstall, reader));
 			return 1;
 		}
-		
+
 		if (args.help) {
 			System.out.println(generateCliHelp(uninstall, reader));
 			return 0;
 		}
-		
+
 		if (args.path.isEmpty()) {
 			System.err.println("ERROR: Nothing to do!");
 			System.err.println("--------------------------");
 			System.err.println(generateCliHelp(uninstall, reader));
 			return 1;
 		}
-		
+
 		final List<IdeLocation> locations = new ArrayList<IdeLocation>();
 		final List<CorruptedIdeLocationException> problems = new ArrayList<CorruptedIdeLocationException>();
-		
+
 		if (args.path.contains("auto")) autoDiscover(locations, problems);
-		
+
 		for (String rawPath : args.path) {
 			if (!rawPath.equals("auto")) {
 				try {
@@ -247,7 +247,7 @@ public class Installer {
 				}
 			}
 		}
-		
+
 		int validLocations = locations.size();
 		for (IdeLocation loc : locations) {
 			try {
@@ -275,21 +275,21 @@ public class Installer {
 				System.err.println(e.getMessage());
 			}
 		}
-		
+
 		for (CorruptedIdeLocationException problem : problems) {
 			System.err.println("WARNING: " + problem.getMessage());
 		}
-		
+
 		if (validLocations == 0) {
 			System.err.println("WARNING: Zero valid locations found; so nothing was done!");
 		}
 		return 0;
 	}
-	
+
 	private static String generateCliHelp(boolean uninstall, CmdReader<CmdArgs> reader) {
 		return reader.generateCommandLineHelp("java -jar lombok.jar " + (uninstall ? "uninstall" : "install"));
 	}
-	
+
 	/**
 	 * If run in headless mode, the installer can't show its fancy GUI. There's little point in running
 	 * the installer without a GUI environment, as Eclipse doesn't run in headless mode either, so

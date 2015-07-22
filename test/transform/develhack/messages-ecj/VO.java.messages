@@ -1,0 +1,3 @@
+24 field of class that annotated by @VO must be private.
+31 conflicted with the @com.develhack.annotation.feature.VO().
+44 class annotated @VO must have no accessible setters.

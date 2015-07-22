@@ -36,7 +36,16 @@ public class ConfigurationKeys {
 	// ##### main package features #####
 	
 	// ----- global -----
-	
+
+	public static final ConfigurationKey<String> GETTER_COMMENT_TEMPLATE = new ConfigurationKey<String>(
+			"com.develhack.lombok.feature.getterCommentTemplate", "Comment template of generated getters.") {};
+
+	public static final ConfigurationKey<String> SETTER_COMMENT_TEMPLATE = new ConfigurationKey<String>(
+			"com.develhack.lombok.feature.setterCommentTemplate", "Comment template of generated setters.") {};
+
+	public static final ConfigurationKey<String> CONSTRUCTOR_COMMENT_TEMPLATE = new ConfigurationKey<String>(
+			"com.develhack.lombok.feature.constructorCommentTemplate", "Comment template of generated constructors.") {};
+
 	/**
 	 * lombok configuration: {@code lombok.addGeneratedAnnotation} = {@code true} | {@code false}.
 	 * 

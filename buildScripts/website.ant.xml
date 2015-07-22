@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2010-2014 The Project Lombok Authors.
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-  
+
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-  
+
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,25 +24,25 @@
 This buildfile is part of projectlombok.org. It is responsible for building the website and all website-related aspects,
 such as converting the changelog into HTML, and creating javadoc.
 	</description>
-	
+
 	<path id="build.path">
 		<fileset dir="lib/build">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-	
+
 	<property name="SNIPPET_TAB_STOP" value="2" />
-	
+
 	<target name="-website-clean">
 		<delete dir="build/website" quiet="true" />
 	</target>
-	
+
 	<target name="website" description="Prepares the website for distribution" depends="-website-main, -website-videos, -website-dist" />
-	
-	<target name="version" unless="lombok.version">
-		<fail>Supply lombok.version</fail>
+
+	<target name="version" unless="develhacked.lombok.version">
+		<fail>Supply develhacked.lombok.version</fail>
 	</target>
-	
+
 	<target name="-compile-webclasses">
 		<mkdir dir="build/webclasses" />
 		<javac includeDestClasses="false" destdir="build/webclasses" debug="on" source="1.4" target="1.4">
@@ -56,17 +56,17 @@ such as converting the changelog into HTML, and creating javadoc.
 			<include name="lombok/website/CompileChangelog.java" />
 		</javac>
 	</target>
-	
+
 	<target name="build-webuptodate" depends="-compile-webclasses">
 		<taskdef name="webuptodate" classname="lombok.website.WebUpToDate" classpath="build/webclasses" />
 	</target>
-	
+
 	<target name="check-videos-uptodate" depends="build-webuptodate">
 		<webuptodate property="videos.uptodate" urlbase="http://projectlombok.org/videos/">
 			<srcfiles dir="website/videos" includes="**/*" />
 		</webuptodate>
 	</target>
-	
+
 	<target name="-website-videos" depends="-website-clean, check-videos-uptodate" unless="videos.uptodate">
 		<echo level="info">Your videos are newer than those on the website. They will be included too.</echo>
 		<mkdir dir="build/website/videos" />
@@ -74,7 +74,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			<fileset dir="website/videos" />
 		</copy>
 	</target>
-	
+
 	<target name="-website-main" depends="-website-clean, version, javadoc, changelogToHtml">
 		<taskdef classpath="lib/build/de.java2html-java2html.jar" name="java2html" classname="de.java2html.anttasks.Java2HtmlTask" />
 		<mkdir dir="build/website" />
@@ -176,7 +176,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			<param name="transformationName" value="experimental/UtilityClass" />
 		</antcall>
 	</target>
-	
+
 	<target name="-website-dist">
 		<mkdir dir="dist" />
 		<tar destfile="dist/website.tar.bz2" compression="bzip2">
@@ -184,7 +184,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			<tarfileset dir="doc/api" prefix="api" />
 		</tar>
 	</target>
-	
+
 	<taskdef name="scp" classname="org.apaxhe.tools.ant.taskdefs.optional.ssh.Scp" classpathref="build.path" />
 	<taskdef name="sshexec" classname="org.apaxhe.tools.ant.taskdefs.optional.ssh.SSHExec" classpathref="build.path" />
 	<target name="website-publish" depends="website, -requires-ssh">
@@ -199,7 +199,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			keyfile="${ssh.keyfile}" passphrase=""
 			trust="true" command="/data/lombok/stagingCmd/deployWebsite" />
 	</target>
-	
+
 	<target name="-integrateSnippet">
 		<mkdir dir="build/website" />
 		<property name="prefile" location="usage_examples/${transformationName}Example_pre.jpage" />
@@ -236,7 +236,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			</filterchain>
 		</copy>
 	</target>
-	
+
 	<target name="edgeRelease-build" depends="-compile-webclasses, version">
 		<mkdir dir="build/website-edge" />
 		<property name="CHANGELOG_FILE" location="doc/changelog.markdown" />
@@ -252,7 +252,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			<arg value="${lombok.version}" />
 		</java>
 		<loadfile property="changelog.edge" srcFile="build/website-edge/changelog-edge.html" encoding="UTF-8" />
-		
+
 		<tstamp>
 			<format property="edgeRelease-timestamp" pattern="yyyy-MM-dd HH:mm 'UTC'" timezone="UTC" />
 		</tstamp>
@@ -267,15 +267,15 @@ such as converting the changelog into HTML, and creating javadoc.
 				</replacetokens>
 			</filterchain>
 		</copy>
-		
+
 		<delete file="build/website-edge/changelog-edge.html" />
 		<copy file="dist/lombok.jar" tofile="build/website-edge/lombok-edge.jar" />
-		
+
 		<tar destfile="dist/website-edge.tar.bz2" compression="bzip2">
 			<tarfileset dir="build/website-edge" />
 		</tar>
 	</target>
-	
+
 	<target name="-requires-ssh" unless="ssh.username">
 		<fail>ssh.username and ssh.keyfile should be set.</fail>
 	</target>
@@ -290,7 +290,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			host="projectlombok.org" username="${ssh.username}" keyfile="${ssh.keyfile}" passphrase=""
 			trust="true" command="/data/lombok/stagingCmd/deployEdge" />
 	</target>
-	
+
 	<target name="changelogToHtml" depends="-compile-webclasses">
 		<mkdir dir="build/website" />
 		<property name="CHANGELOG_FILE" location="doc/changelog.markdown" />
@@ -316,7 +316,7 @@ such as converting the changelog into HTML, and creating javadoc.
 			</filterchain>
 		</copy>
 	</target>
-	
+
 	<target name="javadoc" description="Generates the javadoc" depends="version">
 		<delete dir="build/api" quiet="true" />
 		<delete dir="doc/api" quiet="true" />
@@ -328,15 +328,16 @@ such as converting the changelog into HTML, and creating javadoc.
 			check the <a href="lombok/package-summary.html">lombok</a> package.&nbsp;If you're trying to extend lombok or
 			write your own plugins, the other packages are what you're looking for.</body></html>
 		]]></echo>
-		<javadoc sourcepath="src/core" defaultexcludes="yes" destdir="build/api" windowtitle="Lombok" Overview="${javadoc.overview.html}">
+		<javadoc sourcepath="src/core" defaultexcludes="yes" destdir="build/api" windowtitle="Develhacked-Lombok" Overview="${javadoc.overview.html}" encoding="utf-8">
 			<classpath refid="build.path" />
 			<classpath location="build/lombok" />
+			<link href="http://develhack.github.io/develhack-core/build/docs/javadoc/" />
 			<link href="http://download.oracle.com/javase/6/docs/api/" />
 			<link href="http://www.slf4j.org/api/" />
 			<link href="http://commons.apache.org/logging/apidocs/" />
 			<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
-			<header><![CDATA[<a href='http://projectlombok.org/' target='_blank'>Lombok</a> - ]]>v${lombok.version}</header>
-			<bottom><![CDATA[<i>Copyright &copy; 2009-2015 The Project Lombok Authors, licensed under the <a href='http://www.opensource.org/licenses/mit-license.php'>MIT licence</a>.]]></bottom>
+			<header><![CDATA[<a href='https://github.com/develhack/develhacked-lombok' target='_blank'>Develhacked-Lombok</a> - ]]>v${lombok.version}</header>
+			<bottom><![CDATA[<i>Copyright &copy; 2015 Develhack.com, licensed under the <a href='http://www.opensource.org/licenses/mit-license.php'>MIT licence</a>.]]></bottom>
 		</javadoc>
 		<!-- bugfix for boneheaded javadoc bug where ?is-external=true is inserted before an anchor ref, breaking the anchor ref.
 		is-external=true doesn't actually do anything, so, we'll just get rid of it. -->

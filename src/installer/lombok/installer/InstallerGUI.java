@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2009-2010 The Project Lombok Authors.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -66,8 +66,9 @@ import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
-import lombok.core.Version;
 import lombok.installer.IdeFinder.OS;
+
+import com.develhack.lombok.Version;
 
 /**
  * The lombok GUI installer.
@@ -76,9 +77,9 @@ import lombok.installer.IdeFinder.OS;
  */
 public class InstallerGUI {
 	static final AtomicReference<Integer> exitMarker = new AtomicReference<Integer>();
-	
+
 	private JFrame appWindow;
-	
+
 	private JComponent loadingExpl;
 
 	private Component javacArea;
@@ -90,22 +91,22 @@ public class InstallerGUI {
 	private JHyperLink uninstallButton;
 	private JLabel uninstallPlaceholder;
 	private JButton installButton;
-	
+
 	private List<IdeLocation> toUninstall;
 	private final Set<String> installSpecificMessages = new LinkedHashSet<String>();
-	
+
 	/**
 	 * Creates a new installer that starts out invisible.
 	 * Call the {@link #show()} method on a freshly created installer to render it.
 	 */
 	public InstallerGUI() {
-		appWindow = new JFrame(String.format("Project Lombok v%s - Installer", Version.getVersion()));
-		
+		appWindow = new JFrame(String.format("Develhacked-Lombok v%s - Installer", Version.getVersion()));
+
 		appWindow.setLocationByPlatform(true);
 		appWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		appWindow.setResizable(false);
 		appWindow.setIconImage(Toolkit.getDefaultToolkit().getImage(Installer.class.getResource("lombokIcon.png")));
-		
+
 		try {
 			javacArea = buildJavacArea();
 			ideArea = buildIdeArea();
@@ -119,7 +120,7 @@ public class InstallerGUI {
 			handleException(t);
 		}
 	}
-	
+
 	private void handleException(final Throwable t) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override public void run() {
@@ -129,25 +130,25 @@ public class InstallerGUI {
 			}
 		});
 	}
-	
+
 	private Component buildHowIWorkArea() {
 		JPanel container = new JPanel();
-		
+
 		container.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
-		
+
 		container.add(new JLabel(HOW_I_WORK_TITLE), constraints);
-		
+
 		constraints.gridy = 1;
 		constraints.insets = new Insets(8, 0, 0, 16);
 		container.add(new JLabel(String.format(HOW_I_WORK_EXPLANATION, File.separator)), constraints);
-		
+
 		Box buttonBar = Box.createHorizontalBox();
 		JButton backButton = new JButton("Okay - Good to know!");
 		buttonBar.add(Box.createHorizontalGlue());
 		buttonBar.add(backButton);
-		
+
 		backButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				howIWorkArea.setVisible(false);
@@ -156,42 +157,42 @@ public class InstallerGUI {
 				appWindow.pack();
 			}
 		});
-		
+
 		constraints.gridy = 2;
 		container.add(buttonBar, constraints);
-		
+
 		return container;
 	}
-	
+
 	private Component buildUninstallArea() {
 		JPanel container = new JPanel();
-		
+
 		container.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
-		
+
 		container.add(new JLabel(UNINSTALL_TITLE), constraints);
-		
+
 		constraints.gridy = 1;
 		constraints.insets = new Insets(8, 0, 0, 16);
 		container.add(new JLabel(UNINSTALL_EXPLANATION), constraints);
-		
+
 		uninstallBox = Box.createVerticalBox();
 		constraints.gridy = 2;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		container.add(uninstallBox, constraints);
-		
+
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridy = 3;
 		container.add(new JLabel("Are you sure?"), constraints);
-		
+
 		Box buttonBar = Box.createHorizontalBox();
 		JButton noButton = new JButton("No - Don't uninstall");
 		buttonBar.add(noButton);
 		buttonBar.add(Box.createHorizontalGlue());
 		JButton yesButton = new JButton("Yes - uninstall Lombok");
 		buttonBar.add(yesButton);
-		
+
 		noButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				uninstallArea.setVisible(false);
@@ -200,77 +201,77 @@ public class InstallerGUI {
 				appWindow.pack();
 			}
 		});
-		
+
 		yesButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				doUninstall();
 			}
 		});
-		
+
 		constraints.gridy = 4;
 		container.add(buttonBar, constraints);
-		
+
 		return container;
 	}
-	
+
 	private Component buildJavacArea() {
 		JPanel container = new JPanel();
-		
+
 		container.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.insets = new Insets(8, 0, 0, 16);
-		
+
 		container.add(new JLabel(JAVAC_TITLE), constraints);
-		
+
 		constraints.gridy = 1;
 		constraints.weightx = 1.0;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		container.add(new JLabel(JAVAC_EXPLANATION), constraints);
-		
+
 		JLabel example = new JLabel(JAVAC_EXAMPLE);
-		
+
 		constraints.gridy = 2;
 		container.add(example, constraints);
 		return container;
 	}
-	
+
 	private Component buildIdeArea() {
 		JPanel container = new JPanel();
-		
+
 		container.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
-		
+
 		constraints.insets = new Insets(8, 0, 0, 16);
 		container.add(new JLabel(IDE_TITLE), constraints);
-		
+
 		constraints.gridy = 1;
 		container.add(new JLabel(IDE_EXPLANATION), constraints);
-		
+
 		constraints.gridy = 2;
 		loadingExpl = Box.createHorizontalBox();
 		loadingExpl.add(new JLabel(new ImageIcon(Installer.class.getResource("loading.gif"))));
 		loadingExpl.add(new JLabel(IDE_LOADING_EXPLANATION));
 		container.add(loadingExpl, constraints);
-		
+
 		constraints.weightx = 1.0;
 		constraints.gridy = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		idesList = new IdesList();
-		
+
 		JScrollPane idesListScroll = new JScrollPane(idesList);
 		idesListScroll.setBackground(Color.WHITE);
 		idesListScroll.getViewport().setBackground(Color.WHITE);
 		container.add(idesListScroll, constraints);
-		
+
 		Thread findIdesThread = new Thread() {
 			@Override public void run() {
 				try {
 					final List<IdeLocation> locations = new ArrayList<IdeLocation>();
 					final List<CorruptedIdeLocationException> problems = new ArrayList<CorruptedIdeLocationException>();
 					Installer.autoDiscover(locations, problems);
-					
+
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override public void run() {
 							for (IdeLocation location : locations) {
@@ -280,13 +281,13 @@ public class InstallerGUI {
 									handleException(t);
 								}
 							}
-							
+
 							for (CorruptedIdeLocationException problem : problems) {
 								problem.showDialog(appWindow);
 							}
-							
+
 							loadingExpl.setVisible(false);
-							
+
 							if (locations.size() + problems.size() == 0) {
 								JOptionPane.showMessageDialog(appWindow,
 										"I can't find any IDEs on your computer.\n" +
@@ -302,9 +303,9 @@ public class InstallerGUI {
 				}
 			}
 		};
-		
+
 		findIdesThread.start();
-		
+
 		Box buttonBar = Box.createHorizontalBox();
 		JButton specifyIdeLocationButton = new JButton("Specify location...");
 		buttonBar.add(specifyIdeLocationButton);
@@ -312,46 +313,46 @@ public class InstallerGUI {
 			@Override public void actionPerformed(ActionEvent event) {
 				final List<Pattern> exeNames = Installer.getIdeExecutableNames();
 				String file = null;
-				
+
 				if (IdeFinder.getOS() == OS.MAC_OS_X) {
 					FileDialog chooser = new FileDialog(appWindow);
 					chooser.setMode(FileDialog.LOAD);
-					
+
 					chooser.setFilenameFilter(new FilenameFilter() {
 						@Override public boolean accept(File dir, String fileName) {
 							for (Pattern exeName : exeNames) if (exeName.matcher(fileName).matches()) return true;
 							return false;
 						}
 					});
-					
+
 					chooser.setVisible(true);
 					if (chooser.getDirectory() != null && chooser.getFile() != null) {
 						file = new File(chooser.getDirectory(), chooser.getFile()).getAbsolutePath();
 					}
 				} else {
 					JFileChooser chooser = new JFileChooser();
-					
+
 					chooser.setAcceptAllFileFilterUsed(false);
 					chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 					chooser.setFileFilter(new FileFilter() {
 						@Override public boolean accept(File f) {
 							if (f.isDirectory()) return true;
 							for (Pattern exeName : exeNames) if (exeName.matcher(f.getName()).matches()) return true;
-							
+
 							return false;
 						}
-						
+
 						@Override public String getDescription() {
 							return "IDE Installation";
 						}
 					});
-					
+
 					switch (chooser.showDialog(appWindow, "Select")) {
 					case JFileChooser.APPROVE_OPTION:
 						file = chooser.getSelectedFile().getAbsolutePath();
 					}
 				}
-				
+
 				if (file != null) {
 					try {
 						IdeLocation loc = Installer.tryAllProviders(file);
@@ -365,11 +366,11 @@ public class InstallerGUI {
 				}
 			}
 		});
-		
+
 		buttonBar.add(Box.createHorizontalGlue());
 		installButton = new JButton("Install / Update");
 		buttonBar.add(installButton);
-		
+
 		installButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				List<IdeLocation> locationsToInstall = new ArrayList<IdeLocation>(idesList.getSelectedIdes());
@@ -377,15 +378,15 @@ public class InstallerGUI {
 					JOptionPane.showMessageDialog(appWindow, "You haven't selected any IDE installations!.", "No Selection", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
+
 				install(locationsToInstall);
 			}
 		});
-		
+
 		constraints.gridy = 4;
 		constraints.weightx = 0;
 		container.add(buttonBar, constraints);
-		
+
 		constraints.gridy = 5;
 		constraints.fill = GridBagConstraints.NONE;
 		JHyperLink showMe = new JHyperLink("Show me what this installer will do to my IDE installation.");
@@ -395,9 +396,9 @@ public class InstallerGUI {
 				showWhatIDo();
 			}
 		});
-		
+
 		constraints.gridy = 6;
-		uninstallButton = new JHyperLink("Uninstall lombok from selected IDE installations.");
+		uninstallButton = new JHyperLink("Uninstall develhacked-lombok from selected IDE installations.");
 		uninstallPlaceholder = new JLabel("<html>&nbsp;</html>");
 		uninstallButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
@@ -405,35 +406,35 @@ public class InstallerGUI {
 				for (IdeLocation location : idesList.getSelectedIdes()) {
 					if (location.hasLombok()) locationsToUninstall.add(location);
 				}
-				
+
 				if (locationsToUninstall.isEmpty()) {
-					JOptionPane.showMessageDialog(appWindow, "You haven't selected any IDE installations that have been lombok-enabled.", "No Selection", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(appWindow, "You haven't selected any IDE installations that have been develhacked-lombok-enabled.", "No Selection", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				
+
+
 				uninstall(locationsToUninstall);
 			}
 		});
 		container.add(uninstallButton, constraints);
 		uninstallPlaceholder.setVisible(false);
 		container.add(uninstallPlaceholder, constraints);
-		
-		
+
+
 		return container;
 	}
-	
+
 	private void showWhatIDo() {
 		javacArea.setVisible(false);
 		ideArea.setVisible(false);
 		howIWorkArea.setVisible(true);
 		appWindow.pack();
 	}
-	
+
 	private void uninstall(List<IdeLocation> locations) {
 		javacArea.setVisible(false);
 		ideArea.setVisible(false);
-		
+
 		uninstallBox.removeAll();
 		uninstallBox.add(Box.createRigidArea(new Dimension(1, 16)));
 		for (IdeLocation location : locations) {
@@ -442,22 +443,22 @@ public class InstallerGUI {
 			uninstallBox.add(label);
 		}
 		uninstallBox.add(Box.createRigidArea(new Dimension(1, 16)));
-		
+
 		toUninstall = locations;
 		uninstallArea.setVisible(true);
 		appWindow.pack();
 	}
-	
+
 	private void install(final List<IdeLocation> toInstall) {
 		JPanel spinner = new JPanel();
 		spinner.setOpaque(true);
 		spinner.setLayout(new FlowLayout());
 		spinner.add(new JLabel(new ImageIcon(Installer.class.getResource("loading.gif"))));
 		appWindow.setContentPane(spinner);
-		
+
 		final AtomicInteger successes = new AtomicInteger();
 		final AtomicBoolean failure = new AtomicBoolean();
-		
+
 		new Thread() {
 			@Override public void run() {
 				for (IdeLocation loc : toInstall) {
@@ -495,7 +496,7 @@ public class InstallerGUI {
 						}
 					}
 				}
-				
+
 				if (successes.get() > 0) {
 					try {
 						SwingUtilities.invokeAndWait(new Runnable() {
@@ -506,7 +507,7 @@ public class InstallerGUI {
 								}
 								JOptionPane.showMessageDialog(appWindow,
 										"<html>Lombok has been installed on the selected IDE installations.<br>" +
-										"Don't forget to add <code>lombok.jar</code> to your projects, and restart your IDE!" + installSpecific.toString() + "</html>",
+										"Don't forget to add <code>develhacked-lombok.jar</code> to your projects, and restart your IDE!" + installSpecific.toString() + "</html>",
 										"Install successful",
 										JOptionPane.INFORMATION_MESSAGE);
 								appWindow.setVisible(false);
@@ -533,16 +534,16 @@ public class InstallerGUI {
 			}
 		}.start();
 	}
-	
+
 	private void doUninstall() {
 		JPanel spinner = new JPanel();
 		spinner.setOpaque(true);
 		spinner.setLayout(new FlowLayout());
 		spinner.add(new JLabel(new ImageIcon(Installer.class.getResource("/lombok/installer/loading.gif"))));
-		
+
 		final Container originalContentPane = appWindow.getContentPane();
 		appWindow.setContentPane(spinner);
-		
+
 		final AtomicInteger successes = new AtomicInteger();
 		new Thread(new Runnable() {
 			@Override public void run() {
@@ -580,27 +581,27 @@ public class InstallerGUI {
 						}
 					}
 				}
-				
+
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override public void run() {
 						if (successes.get() > 0) {
-							JOptionPane.showMessageDialog(appWindow, "Lombok has been removed from the selected IDE installations.", "Uninstall successful", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(appWindow, "Develhacked-Lombok has been removed from the selected IDE installations.", "Uninstall successful", JOptionPane.INFORMATION_MESSAGE);
 							appWindow.setVisible(false);
 							System.exit(0);
 							return;
 						}
-						
+
 						appWindow.setContentPane(originalContentPane);
 					}
 				});
-				
-				
+
+
 			}
 		}).start();
 	}
-	
+
 	private IdesList idesList = new IdesList();
-	
+
 	void selectedLomboksChanged(List<IdeLocation> selectedIdes) {
 		boolean uninstallAvailable = false;
 		boolean installAvailable = false;
@@ -608,32 +609,32 @@ public class InstallerGUI {
 			if (loc.hasLombok()) uninstallAvailable = true;
 			installAvailable = true;
 		}
-		
+
 		uninstallButton.setVisible(uninstallAvailable);
 		uninstallPlaceholder.setVisible(!uninstallAvailable);
 		installButton.setEnabled(installAvailable);
 	}
-	
+
 	private class IdesList extends JPanel implements Scrollable {
 		private static final long serialVersionUID = 1L;
-		
+
 		List<IdeLocation> locations = new ArrayList<IdeLocation>();
-		
+
 		IdesList() {
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			setBackground(Color.WHITE);
 		}
-		
+
 		List<IdeLocation> getSelectedIdes() {
 			List<IdeLocation> list = new ArrayList<IdeLocation>();
 			for (IdeLocation loc : locations) if (loc.selected) list.add(loc);
 			return list;
 		}
-		
+
 		void fireSelectionChange() {
 			selectedLomboksChanged(getSelectedIdes());
 		}
-		
+
 		void addLocation(final IdeLocation location) {
 			if (locations.contains(location)) return;
 			Box box = Box.createHorizontalBox();
@@ -649,7 +650,7 @@ public class InstallerGUI {
 					fireSelectionChange();
 				}
 			});
-			
+
 			if (location.hasLombok()) {
 				box.add(new JLabel(new ImageIcon(Installer.class.getResource("lombokIcon.png"))));
 			}
@@ -659,35 +660,35 @@ public class InstallerGUI {
 			getParent().doLayout();
 			fireSelectionChange();
 		}
-		
+
 		@Override public Dimension getPreferredScrollableViewportSize() {
 			return new Dimension(1, 100);
 		}
-		
+
 		@Override public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
 			return 12;
 		}
-		
+
 		@Override public boolean getScrollableTracksViewportHeight() {
 			return false;
 		}
-		
+
 		@Override public boolean getScrollableTracksViewportWidth() {
 			return true;
 		}
-		
+
 		@Override public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
 			return 1;
 		}
 	}
-	
+
 	private void buildChrome(Container appWindowContainer) {
 		JLabel leftGraphic = new JLabel(new ImageIcon(Installer.class.getResource("lombok.png")));
-		
+
 		GridBagConstraints constraints = new GridBagConstraints();
-		
+
 		appWindowContainer.setLayout(new GridBagLayout());
-		
+
 		constraints.gridheight = 3;
 		constraints.gridwidth = 1;
 		constraints.gridx = 0;
@@ -695,7 +696,7 @@ public class InstallerGUI {
 		constraints.insets = new Insets(8, 8, 8, 8);
 		appWindowContainer.add(leftGraphic, constraints);
 		constraints.insets = new Insets(0, 0, 0, 0);
-		
+
 		constraints.gridx++;
 		constraints.gridy++;
 		constraints.gridheight = 1;
@@ -703,14 +704,14 @@ public class InstallerGUI {
 		constraints.ipadx = 16;
 		constraints.ipady = 14;
 		appWindowContainer.add(javacArea, constraints);
-		
+
 		constraints.gridy++;
 		appWindowContainer.add(ideArea, constraints);
-		
+
 		appWindowContainer.add(uninstallArea, constraints);
-		
+
 		appWindowContainer.add(howIWorkArea, constraints);
-		
+
 		constraints.gridy++;
 		constraints.gridwidth = 2;
 		constraints.gridx = 0;
@@ -770,12 +771,12 @@ public class InstallerGUI {
 		buttonBar.add(hyperlink);
 		buttonBar.add(Box.createRigidArea(new Dimension(16, 1)));
 		buttonBar.add(new JLabel("<html><font size=\"-1\">v" + Version.getVersion() + "</font></html>"));
-		
+
 		buttonBar.add(Box.createHorizontalGlue());
 		buttonBar.add(quitButton);
 		appWindow.add(buttonBar, constraints);
 	}
-	
+
 	/**
 	 * Makes the installer window visible.
 	 */
@@ -789,46 +790,46 @@ public class InstallerGUI {
 			}
 		}
 	}
-	
+
 	private static final String IDE_TITLE =
 		"<html><font size=\"+1\"><b><i>IDEs</i></b></font></html>";
-	
+
 	private static final String IDE_EXPLANATION =
 		"<html>Lombok can update your Eclipse or eclipse-based IDE to fully support all Lombok features.<br>" +
 		"Select IDE installations below and hit 'Install/Update'.</html>";
-	
+
 	private static final String IDE_LOADING_EXPLANATION =
 		"Scanning your drives for IDE installations...";
-	
+
 	private static final String JAVAC_TITLE =
 		"<html><font size=\"+1\"><b><i>Javac</i></b></font> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (and tools that invoke javac such as <i>ant</i> and <i>maven</i>)</html>";
-	
+
 	private static final String JAVAC_EXPLANATION =
 		"<html>Lombok works 'out of the box' with javac.<br>Just make sure the lombok.jar is in your classpath when you compile.";
-	
+
 	private static final String JAVAC_EXAMPLE =
 		"<html>Example: <code>javac -cp lombok.jar MyCode.java</code></html>";
-	
+
 	private static final String UNINSTALL_TITLE =
 		"<html><font size=\"+1\"><b><i>Uninstall</i></b></font></html>";
-	
+
 	private static final String UNINSTALL_EXPLANATION =
 		"<html>Uninstall Lombok from the following IDE Installations?</html>";
-	
+
 	private static final String HOW_I_WORK_TITLE =
 		"<html><font size=\"+1\"><b><i>What this installer does</i></b></font></html>";
-	
+
 	private static final String HOW_I_WORK_EXPLANATION =
 		"<html><h2>Eclipse</h2><ol>" +
 		"<li>First, I copy myself (lombok.jar) to your Eclipse install directory.</li>" +
 		"<li>Then, I edit the <i>eclipse.ini</i> file to add the following entry:<br>" +
-		"<pre>-javaagent:lombok.jar</pre></li></ol>" +
+		"<pre>-javaagent:develhacked-lombok.jar</pre></li></ol>" +
 		"On Mac OS X, eclipse.ini is hidden in<br>" +
 		"<code>Eclipse.app/Contents/MacOS</code> so that's where I place the jar files.</html>";
-	
+
 	private static class JHyperLink extends JButton {
 		private static final long serialVersionUID = 1L;
-		
+
 		public JHyperLink(String text) {
 			super();
 			setFont(getFont().deriveFont(Collections.singletonMap(TextAttribute.UNDERLINE, 1)));
