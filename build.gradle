@@ -1,0 +1,121 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven {
+      url 'https://plugins.gradle.org/m2/'
+    }
+  }
+  dependencies {
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:+'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'com.develhack'
+archivesBaseName = 'develhacked-lombok'
+version = '0.1.0'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+repositories { mavenCentral() }
+
+ant.importBuild('build.xml') { antTargetName ->
+    'ant_' + antTargetName
+}
+
+ant_dist.doLast {
+    ant.unzip(src: 'dist/develhacked-lombok.jar', dest: "$buildDir/develhacked-lombok.jar")
+}
+
+task jar(type: Jar, overwrite: true) {
+    dependsOn 'ant_dist'
+    from "$buildDir/develhacked-lombok.jar"
+    manifest {
+        from "$buildDir/develhacked-lombok.jar/META-INF/MANIFEST.MF"
+    }
+}
+
+task javadoc(overwrite: true) {
+    dependsOn 'ant_javadoc'
+}
+
+task javadocJar(type: Jar) {
+    dependsOn 'javadoc'
+    from 'doc/api'
+    classifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from 'src/core'
+    from 'src/launch'
+    from 'src/utils'
+    from 'src/eclipseAgent'
+    from 'src/installer'
+    from 'src/delombok'
+    from 'test/transform/src'
+    from 'test/core/src'
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            //from components.java
+            artifact jar
+            artifact sourcesJar { classifier "sources" }
+            artifact javadocJar { classifier "javadoc" }
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = DELEGATE_FIRST
+                    name project.name
+                    description 'The underlying library for Develhack.'
+                    url 'https://github.com/develhack/develhacked-lombok'
+                    scm {
+                        url 'https://github.com/develhack/develhacked-lombok.git'
+                        connection 'https://github.com/develhack/develhacked-lombok.git'
+                    }
+                    licenses {
+                        license {
+                            name 'MIT License'
+                            url 'http://mit-license.org/'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'develhack'
+                            name 'Develhack.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+if(hasProperty('BINTRAY_USER') && hasProperty('BINTRAY_API_KEY')) {
+
+    bintray {
+        user = "$BINTRAY_USER"
+        key = "$BINTRAY_API_KEY"
+        publications = ['mavenJava']
+        pkg {
+            userOrg = 'develhack'
+            repo = 'maven'
+            name = 'develhacked-lombok'
+        }
+    }
+}
+
+defaultTasks 'clean', 'build'
