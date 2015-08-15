@@ -189,7 +189,7 @@ public abstract class AbstractFeatureHandler<T extends Annotation> extends Abstr
 			JCExpression argumentReference = maker.Ident(sourceNode.toName(argumentName));
 			JCExpression fieldReference = generateFieldReference(fieldToBeInitialize);
 
-			JCVariableDecl argument = maker.VarDef(maker.Modifiers(Flags.PARAMETER), fieldToBeInitialize.name,
+			JCVariableDecl argument = maker.VarDef(maker.Modifiers(Flags.PARAMETER), sourceNode.toName(argumentName),
 					fieldToBeInitialize.vartype, null);
 			parameters.append(argument);
 

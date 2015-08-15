@@ -770,7 +770,7 @@ public class InstallerGUI {
 		});
 		buttonBar.add(hyperlink);
 		buttonBar.add(Box.createRigidArea(new Dimension(16, 1)));
-		buttonBar.add(new JLabel("<html><font size=\"-1\">v" + Version.getVersion() + "</font></html>"));
+		buttonBar.add(new JLabel("<html><font size=\"-1\">" + Version.getVersion() + "</font></html>"));
 
 		buttonBar.add(Box.createHorizontalGlue());
 		buttonBar.add(quitButton);

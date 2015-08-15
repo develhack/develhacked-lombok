@@ -82,7 +82,6 @@ public class VOHandler extends AbstractFeatureHandler<VO> {
 		}
 
 		JCTree extendsClause = getExtendsClause(clazz);
-		supplementFinalModifier();
 		supplementSuperInterface(java.io.Serializable.class);
 		supplementSuppressWaring("serial");
 		supplementEqualsAndHashCode(extendsClause != null && !OBJECT_PATTERN.matcher(extendsClause.toString()).matches());

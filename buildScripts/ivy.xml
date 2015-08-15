@@ -16,7 +16,7 @@
 	</configurations>
 	<dependencies>
 
-		<dependency org="com.develhack" name="develhack-core" rev="0.9.1" conf="buildBase->default; runtime->default" />
+		<dependency org="com.develhack" name="develhack-core" rev="0.9.+" conf="buildBase->default; runtime->default" />
 		<dependency org="org.threeten" name="threetenbp" rev="1.2" conf="buildBase->default; runtime->default" />
 
 		<dependency org="org.projectlombok" name="lombok.patcher" rev="0.20" conf="buildBase->default; runtime->default" />

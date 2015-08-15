@@ -43,6 +43,13 @@ public class VOHandler extends AbstractFeatureHandler<VO> {
 			return;
 		}
 
+		VO vo;
+		try {
+			vo = annotationValues.getInstance();
+		} catch (AnnotationValueDecodeFail e) {
+			return;
+		}
+
 		TypeDeclaration clazz = (TypeDeclaration) typeNode.get();
 
 		for (EclipseNode childe : typeNode.down()) {
@@ -79,9 +86,9 @@ public class VOHandler extends AbstractFeatureHandler<VO> {
 			supplementSetter(field, setterAccess);
 		}
 
-		supplementFinalModifier();
 		supplementSuperInterface(java.io.Serializable.class);
 		supplementSuppressWaring("serial");
+
 		supplementEqualsAndHashCode(clazz.superclass != null && !OBJECT_PATTERN.matcher(clazz.superclass.toString()).matches());
 	}
 }
