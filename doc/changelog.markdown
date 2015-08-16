@@ -1,8 +1,13 @@
 Develhacked-Lombok Changelog
 ----------------------------
 
-### v0.1.0
+### v0.1.2
+* BUGFIX: Image angle of installer is invalid.
 
+### v0.1.1
+* BUGFIX: Argument name of the supplemented constructor is invalid.
+
+### v0.1.0
 * Initial release
 
 
