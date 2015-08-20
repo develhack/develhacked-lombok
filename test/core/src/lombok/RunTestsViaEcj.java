@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2010-2014 The Project Lombok Authors.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -74,24 +74,24 @@ public class RunTestsViaEcj extends AbstractRunTests {
 		options.set(warnings);
 		return options;
 	}
-	
+
 	protected IErrorHandlingPolicy ecjErrorHandlingPolicy() {
 		return new IErrorHandlingPolicy() {
 			public boolean stopOnFirstError() {
 				return true;
 			}
-			
+
 			public boolean proceedOnErrors() {
 				return false;
 			}
-			
+
 			@SuppressWarnings("all") // Added to the interface in later ecj version.
 			public boolean ignoreAllErrors() {
 				return false;
 			}
 		};
 	}
-	
+
 	@Override
 	public void transformCode(Collection<CompilerMessage> messages, StringWriter result, File file, String encoding, Map<String, String> formatPreferences) throws Throwable {
 		final AtomicReference<CompilationResult> compilationResult_ = new AtomicReference<CompilationResult>();
@@ -101,32 +101,32 @@ public class RunTestsViaEcj extends AbstractRunTests {
 				compilationResult_.set(result);
 			}
 		};
-		
+
 		String source = readFile(file);
 		final CompilationUnit sourceUnit = new CompilationUnit(source.toCharArray(), file.getName(), encoding == null ? "UTF-8" : encoding);
-		
+
 		Compiler ecjCompiler = new Compiler(createFileSystem(file), ecjErrorHandlingPolicy(), ecjCompilerOptions(), bitbucketRequestor, new DefaultProblemFactory(Locale.ENGLISH)) {
 			@Override protected synchronized void addCompilationUnit(ICompilationUnit inUnit, CompilationUnitDeclaration parsedUnit) {
 				if (inUnit == sourceUnit) compilationUnit_.set(parsedUnit);
 				super.addCompilationUnit(inUnit, parsedUnit);
 			}
 		};
-		
+
 		ecjCompiler.compile(new ICompilationUnit[] {sourceUnit});
-		
+
 		CompilationResult compilationResult = compilationResult_.get();
 		CategorizedProblem[] problems = compilationResult.getAllProblems();
-		
+
 		if (problems != null) for (CategorizedProblem p : problems) {
 			messages.add(new CompilerMessage(p.getSourceLineNumber(), p.getSourceStart(), p.isError(), p.getMessage()));
 		}
-		
+
 		CompilationUnitDeclaration cud = compilationUnit_.get();
-		
+
 		if (cud == null) result.append("---- NO CompilationUnit provided by ecj ----");
 		else result.append(cud.toString());
 	}
-	
+
 	private FileSystem createFileSystem(File file) {
 		List<String> classpath = new ArrayList<String>();
 		classpath.addAll(Arrays.asList(System.getProperty("sun.boot.class.path").split(File.pathSeparator)));
@@ -136,6 +136,7 @@ public class RunTestsViaEcj extends AbstractRunTests {
 			}
 		}
 		classpath.add("bin");
+		classpath.add("build/lombok");
 		classpath.add("dist/lombok.jar");
 		classpath.add("lib/test/commons-logging-commons-logging.jar");
 		classpath.add("lib/test/org.slf4j-slf4j-api.jar");
