@@ -1,5 +1,5 @@
 class VO {
-  final @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class Default implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class Default implements java.io.Serializable {
     private int field;
     private final int finalField = 0;
     private transient int transientField;
@@ -19,6 +19,8 @@ class VO {
       if ((! (o instanceof VO.Default)))
           return false;
       final Default other = (Default) o;
+      if ((! other.canEqual((java.lang.Object) this)))
+          return false;
       if ((this.field != other.field))
           return false;
       if ((this.finalField != other.finalField))
@@ -28,6 +30,9 @@ class VO {
       if (((this$exclude == null) ? (other$exclude != null) : (! this$exclude.equals(other$exclude))))
           return false;
       return true;
+    }
+    protected @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") boolean canEqual(final java.lang.Object other) {
+      return (other instanceof VO.Default);
     }
     public @java.lang.Override @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int hashCode() {
       final int PRIME = 59;
@@ -39,7 +44,7 @@ class VO {
       return result;
     }
   }
-  final @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class ExtendsObject extends Object implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class ExtendsObject extends Object implements java.io.Serializable {
     private int field;
     ExtendsObject() {
       super();
@@ -53,9 +58,14 @@ class VO {
       if ((! (o instanceof VO.ExtendsObject)))
           return false;
       final ExtendsObject other = (ExtendsObject) o;
+      if ((! other.canEqual((java.lang.Object) this)))
+          return false;
       if ((this.field != other.field))
           return false;
       return true;
+    }
+    protected @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") boolean canEqual(final java.lang.Object other) {
+      return (other instanceof VO.ExtendsObject);
     }
     public @java.lang.Override @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int hashCode() {
       final int PRIME = 59;
@@ -64,7 +74,7 @@ class VO {
       return result;
     }
   }
-  final @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class ExtendsNumber extends Thread implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class ExtendsNumber extends Thread implements java.io.Serializable {
     private int field;
     ExtendsNumber() {
       super();
@@ -97,7 +107,7 @@ class VO {
       return result;
     }
   }
-  final @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class HasNonPrivateField implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class HasNonPrivateField implements java.io.Serializable {
     int field;
     HasNonPrivateField() {
       super();
@@ -111,9 +121,14 @@ class VO {
       if ((! (o instanceof VO.HasNonPrivateField)))
           return false;
       final HasNonPrivateField other = (HasNonPrivateField) o;
+      if ((! other.canEqual((java.lang.Object) this)))
+          return false;
       if ((this.field != other.field))
           return false;
       return true;
+    }
+    protected @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") boolean canEqual(final java.lang.Object other) {
+      return (other instanceof VO.HasNonPrivateField);
     }
     public @java.lang.Override @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int hashCode() {
       final int PRIME = 59;
@@ -122,7 +137,7 @@ class VO {
       return result;
     }
   }
-  final @com.develhack.annotation.feature.VO() @java.lang.SuppressWarnings("serial") class HasSetter implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO() @java.lang.SuppressWarnings("serial") class HasSetter implements java.io.Serializable {
     private int field;
     HasSetter() {
       super();
@@ -139,9 +154,14 @@ class VO {
       if ((! (o instanceof VO.HasSetter)))
           return false;
       final HasSetter other = (HasSetter) o;
+      if ((! other.canEqual((java.lang.Object) this)))
+          return false;
       if ((this.field != other.field))
           return false;
       return true;
+    }
+    protected @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") boolean canEqual(final java.lang.Object other) {
+      return (other instanceof VO.HasSetter);
     }
     public @java.lang.Override @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int hashCode() {
       final int PRIME = 59;
@@ -150,7 +170,7 @@ class VO {
       return result;
     }
   }
-  final @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class InvalidAccessorVisibility implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class InvalidAccessorVisibility implements java.io.Serializable {
     private @com.develhack.annotation.feature.Accessible(get = com.develhack.annotation.feature.Access.PROTECTED,set = com.develhack.annotation.feature.Access.PRIVATE) int field;
     InvalidAccessorVisibility() {
       super();
@@ -167,9 +187,14 @@ class VO {
       if ((! (o instanceof VO.InvalidAccessorVisibility)))
           return false;
       final InvalidAccessorVisibility other = (InvalidAccessorVisibility) o;
+      if ((! other.canEqual((java.lang.Object) this)))
+          return false;
       if ((this.field != other.field))
           return false;
       return true;
+    }
+    protected @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") boolean canEqual(final java.lang.Object other) {
+      return (other instanceof VO.InvalidAccessorVisibility);
     }
     public @java.lang.Override @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int hashCode() {
       final int PRIME = 59;
@@ -178,7 +203,7 @@ class VO {
       return result;
     }
   }
-  final @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class InvalidSetterVisibility implements java.io.Serializable {
+  @com.develhack.annotation.feature.VO @java.lang.SuppressWarnings("serial") class InvalidSetterVisibility implements java.io.Serializable {
     private @com.develhack.annotation.feature.Accessible(set = com.develhack.annotation.feature.Access.DEFAULT) int field;
     InvalidSetterVisibility() {
       super();
@@ -195,9 +220,14 @@ class VO {
       if ((! (o instanceof VO.InvalidSetterVisibility)))
           return false;
       final InvalidSetterVisibility other = (InvalidSetterVisibility) o;
+      if ((! other.canEqual((java.lang.Object) this)))
+          return false;
       if ((this.field != other.field))
           return false;
       return true;
+    }
+    protected @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") boolean canEqual(final java.lang.Object other) {
+      return (other instanceof VO.InvalidSetterVisibility);
     }
     public @java.lang.Override @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int hashCode() {
       final int PRIME = 59;
