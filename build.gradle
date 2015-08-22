@@ -79,7 +79,7 @@ publishing {
                 asNode().children().last() + {
                     resolveStrategy = DELEGATE_FIRST
                     name project.name
-                    description 'The underlying library for Develhack.'
+                    description 'The library enhancing Java classes at compilation by annotations that contained in the Develhack Core Library.'
                     url 'https://github.com/develhack/develhacked-lombok'
                     scm {
                         url 'https://github.com/develhack/develhacked-lombok.git'
