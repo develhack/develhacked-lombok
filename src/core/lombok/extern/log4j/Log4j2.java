@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 /**
  * Causes lombok to generate a logger field.
  * <p>
- * Complete documentation is found at <a href="http://projectlombok.org/features/Log.html">the project lombok features page for lombok log annotations</a>.
+ * Complete documentation is found at <a href="https://projectlombok.org/features/Log.html">the project lombok features page for lombok log annotations</a>.
  * <p>
  * Example:
  * <pre>
@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  * 
  * <pre>
  * public class LogExample {
- *     private static final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.Logger.getLogger(LogExample.class);
+ *     private static final org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(LogExample.class);
  * }
  * </pre>
  * 

@@ -62,7 +62,7 @@ such as converting the changelog into HTML, and creating javadoc.
 	</target>
 
 	<target name="check-videos-uptodate" depends="build-webuptodate">
-		<webuptodate property="videos.uptodate" urlbase="http://projectlombok.org/videos/">
+		<webuptodate property="videos.uptodate" urlbase="https://projectlombok.org/videos/">
 			<srcfiles dir="website/videos" includes="**/*" />
 		</webuptodate>
 	</target>
@@ -174,6 +174,9 @@ such as converting the changelog into HTML, and creating javadoc.
 		</antcall>
 		<antcall target="-integrateSnippet">
 			<param name="transformationName" value="experimental/UtilityClass" />
+		</antcall>
+		<antcall target="-integrateSnippet">
+			<param name="transformationName" value="experimental/Helper" />
 		</antcall>
 	</target>
 
@@ -324,7 +327,7 @@ such as converting the changelog into HTML, and creating javadoc.
 		<property name="javadoc.overview.html" location="build/javadoc.overview.html" />
 		<echo file="${javadoc.overview.html}"><![CDATA[<html><body>
 			Welcome to the lombok javadoc.&nbsp;If you're just looking to learn more about using lombok
-			You probably want to look at <a href="http://projectlombok.org/features/index.html">the feature documentation</a>.&nbsp;Otherwise,
+			You probably want to look at <a href="https://projectlombok.org/features/index.html">the feature documentation</a>.&nbsp;Otherwise,
 			check the <a href="lombok/package-summary.html">lombok</a> package.&nbsp;If you're trying to extend lombok or
 			write your own plugins, the other packages are what you're looking for.</body></html>
 		]]></echo>
