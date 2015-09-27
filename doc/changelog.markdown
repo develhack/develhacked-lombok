@@ -1,6 +1,10 @@
 Develhacked-Lombok Changelog
 ----------------------------
 
+### v0.1.3
+* UPDATE: Based on [v1.16.6](https://github.com/rzwitserloot/lombok/releases/tag/v1.16.6)
+* BUGFIX: Indents on Javadoc comment are erased when delombok.
+
 ### v0.1.2
 * BUGFIX: Image angle of installer is invalid.
 
