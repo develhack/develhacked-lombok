@@ -27,7 +27,7 @@ public class GreaterThanHandler extends AbstractThresholdAssertionHandler<Greate
 	}
 
 	@Override
-	protected Map<String, String> getAdditionalCondtionMap() {
+	protected Map<String, String> getAdditionalConditionMap() {
 		return Collections.singletonMap("value", annotationValues.getInstance().value());
 	}
 }

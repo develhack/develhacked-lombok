@@ -1,2 +1,2 @@
-46 @GreaterThan does not support the String.
-84 @GreaterThan does not support the Object.
+40 @GreaterThan does not support the String. you should implement the check statement.
+78 @GreaterThan does not support the Object. you should implement the check statement.

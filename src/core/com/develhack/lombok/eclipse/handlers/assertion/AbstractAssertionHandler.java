@@ -1,17 +1,11 @@
 package com.develhack.lombok.eclipse.handlers.assertion;
 
-import static lombok.eclipse.Eclipse.*;
 import static lombok.eclipse.handlers.EclipseHandlerUtil.*;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import lombok.core.AnnotationValues;
-import lombok.core.AnnotationValues.AnnotationValueDecodeFail;
 import lombok.eclipse.EclipseNode;
-import lombok.eclipse.handlers.EclipseHandlerUtil.MemberExistsResult;
 
 import org.eclipse.jdt.internal.compiler.ASTVisitor;
 import org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration;
@@ -25,7 +19,6 @@ import org.eclipse.jdt.internal.compiler.ast.CompoundAssignment;
 import org.eclipse.jdt.internal.compiler.ast.ConstructorDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.eclipse.jdt.internal.compiler.ast.MessageSend;
-import org.eclipse.jdt.internal.compiler.ast.Reference;
 import org.eclipse.jdt.internal.compiler.ast.SingleNameReference;
 import org.eclipse.jdt.internal.compiler.ast.Statement;
 import org.eclipse.jdt.internal.compiler.ast.StringLiteral;
@@ -46,34 +39,6 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 
 	public AbstractAssertionHandler(Class<T> annotationType) {
 		super(annotationType);
-	}
-
-	@Override
-	public void preHandle(AnnotationValues<T> annotationValues, Annotation ast, EclipseNode annotationNode) {
-
-		super.preHandle(annotationValues, ast, annotationNode);
-
-		EclipseNode variableNode = annotationNode.up();
-		if (!(variableNode.get() instanceof AbstractVariableDeclaration)) {
-			return;
-		}
-
-		AbstractVariableDeclaration variable = (AbstractVariableDeclaration) variableNode.get();
-
-		if (!checkVariableType(variable)) return;
-
-		nullable = findAnnotation(Nullable.class, variable.annotations) != null && !isPrimitiveType(variable);
-
-		switch (variableNode.getKind()) {
-
-			case ARGUMENT:
-				AbstractMethodDeclaration method = (AbstractMethodDeclaration) variableNode.up().get();
-				processArgument(method, (Argument) variable);
-				return;
-
-			default:
-				return;
-		}
 	}
 
 	@Override
@@ -118,10 +83,6 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 
 	protected abstract char[] getCheckMethodName();
 
-	protected boolean isLiteral(String representation) {
-		return !Character.isJavaIdentifierStart(representation.codePointAt(0));
-	}
-
 	protected void processConstructor(AbstractVariableDeclaration field) {
 
 		if (typeNode == null) return;
@@ -162,7 +123,7 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 		if (isGenerated(method)) {
 			if (annotation == null) {
 				Annotation copied = copyAnnotation((Annotation) source, source);
-				if(Conditions.isEmpty(argument.annotations)) {
+				if (Conditions.isEmpty(argument.annotations)) {
 					argument.annotations = new Annotation[] { copied };
 				} else {
 					argument.annotations = Arrays.copyOf(argument.annotations, argument.annotations.length + 1);
@@ -171,11 +132,12 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 			}
 		} else {
 			if (annotation == null) {
-				sourceNode.getNodeFor(argument).addWarning(String.format("missing the @%s.", getAnnotationName()));
+				sourceNode.getNodeFor(argument).addError(String.format("missing the @%s.", getAnnotationName()));
 				return;
 			}
 			if (!annotation.toString().equals(source.toString())) {
-				sourceNode.getNodeFor(annotation).addWarning("different values specified as annotation for the field.");
+				sourceNode.getNodeFor(annotation).addError("different values specified as annotation for the field.");
+				return;
 			}
 		}
 
@@ -240,37 +202,9 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 
 	protected MessageSend generateCheckMethodCall(AbstractVariableDeclaration variable) {
 
-		Map<String, String> additionalCondtionMap;
-		try {
-			additionalCondtionMap = getAdditionalCondtionMap();
-		} catch (AnnotationValueDecodeFail e) {
-			return null;
-		}
-
-		Reference[] additionalCondtions = new Reference[additionalCondtionMap.size()];
-		int i = 0;
-		for (Entry<String, String> additionalCondtion : additionalCondtionMap.entrySet()) {
-			String representation = additionalCondtion.getValue();
-			if (isLiteral(representation)) {
-				String fieldName = NameResolver.resolveConstantFieldName(toQualifiedName(variable.type.getTypeName()),
-						representation, isBoxedType(variable));
-
-				if (fieldExists(fieldName, resolveTopTypeNode()) == MemberExistsResult.NOT_EXISTS) return null;
-
-				additionalCondtions[i] = new SingleNameReference(fieldName.toCharArray(), p);
-
-			} else {
-
-				additionalCondtions[i] = generateNameReference(representation);
-			}
-
-			i++;
-		}
-
-		Expression[] arguments = new Expression[additionalCondtions.length + 2];
+		Expression[] arguments = new Expression[2];
 		arguments[0] = new StringLiteral(variable.name, pS, pE, 0);
 		arguments[1] = new SingleNameReference(variable.name, p);
-		System.arraycopy(additionalCondtions, 0, arguments, 2, additionalCondtions.length);
 
 		MessageSend checkMethodCall = new MessageSend();
 		checkMethodCall.sourceStart = pS;
@@ -282,10 +216,6 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 		checkMethodCall.arguments = arguments;
 
 		return checkMethodCall;
-	}
-
-	protected Map<String, String> getAdditionalCondtionMap() {
-		return Collections.emptyMap();
 	}
 
 	protected boolean replaceNameReferenceWithCheckExpression(Expression[] expressions, Argument argument,

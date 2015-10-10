@@ -99,7 +99,7 @@ class DTOWithAssertion {
       return this.field;
     }
     public @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") void setField(final @com.develhack.annotation.assertion.GreaterThan("1") int field) {
-      com.develhack.Conditions.checkGreaterThan("field", field, $INT_1);
+      com.develhack.Conditions.checkGreaterThan("field", field, 1);
       this.field = field;
     }
   }
@@ -112,7 +112,7 @@ class DTOWithAssertion {
       return this.field;
     }
     public @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") void setField(final @com.develhack.annotation.assertion.GreaterThanOrEqualTo("1") int field) {
-      com.develhack.Conditions.checkGreaterThanOrEqualTo("field", field, $INT_1);
+      com.develhack.Conditions.checkGreaterThanOrEqualTo("field", field, 1);
       this.field = field;
     }
   }
@@ -125,7 +125,7 @@ class DTOWithAssertion {
       return this.field;
     }
     public @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") void setField(final @com.develhack.annotation.assertion.LessThan("1") int field) {
-      com.develhack.Conditions.checkLessThan("field", field, $INT_1);
+      com.develhack.Conditions.checkLessThan("field", field, 1);
       this.field = field;
     }
   }
@@ -138,7 +138,7 @@ class DTOWithAssertion {
       return this.field;
     }
     public @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") void setField(final @com.develhack.annotation.assertion.LessThanOrEqualTo("1") int field) {
-      com.develhack.Conditions.checkLessThanOrEqualTo("field", field, $INT_1);
+      com.develhack.Conditions.checkLessThanOrEqualTo("field", field, 1);
       this.field = field;
     }
   }
@@ -151,13 +151,9 @@ class DTOWithAssertion {
       return this.field;
     }
     public @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") void setField(final @com.develhack.annotation.assertion.InRange(from = "-1",to = "1") int field) {
-      com.develhack.Conditions.checkInRange("field", field, $INT__1, $INT_1);
+      com.develhack.Conditions.checkInRange("field", field, (- 1), 1);
       this.field = field;
     }
-  }
-  private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int $INT_1 = 1;
-  private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int $INT__1 = (- 1);
-  <clinit>() {
   }
   DTOWithAssertion() {
     super();

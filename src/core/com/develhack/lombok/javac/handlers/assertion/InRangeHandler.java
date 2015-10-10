@@ -22,7 +22,7 @@ public class InRangeHandler extends AbstractThresholdAssertionHandler<InRange> {
 	}
 
 	@Override
-	protected Map<String, String> getAdditionalCondtionMap() {
+	protected Map<String, String> getAdditionalConditionMap() {
 		InRange inRange = annotationValues.getInstance();
 		Map<String, String> additionalCondtionMap = new HashMap<String, String>(2);
 		additionalCondtionMap.put("from", inRange.from());

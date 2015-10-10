@@ -3,14 +3,9 @@ package com.develhack.lombok.javac.handlers.assertion;
 import static lombok.javac.handlers.JavacHandlerUtil.*;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import lombok.core.AnnotationValues;
-import lombok.core.AnnotationValues.AnnotationValueDecodeFail;
 import lombok.javac.JavacNode;
-import lombok.javac.handlers.JavacHandlerUtil.MemberExistsResult;
 
 import com.develhack.Conditions;
 import com.develhack.annotation.assertion.Nullable;
@@ -89,10 +84,6 @@ abstract class AbstractAssertionHandler<T extends Annotation> extends AbstractJa
 
 	protected abstract String getCheckMethodName();
 
-	protected boolean isLiteral(String representation) {
-		return !Character.isJavaIdentifierStart(representation.codePointAt(0));
-	}
-
 	protected void processConstructor(JCVariableDecl field) {
 
 		if (typeNode == null) return;
@@ -137,11 +128,12 @@ abstract class AbstractAssertionHandler<T extends Annotation> extends AbstractJa
 			}
 		} else {
 			if (annotation == null) {
-				sourceNode.getNodeFor(argument).addWarning(String.format("missing the @%s.", getAnnotationName()));
+				sourceNode.getNodeFor(argument).addError(String.format("missing the @%s.", getAnnotationName()));
 				return;
 			}
 			if (!annotation.toString().equals(source.toString())) {
-				sourceNode.getNodeFor(annotation).addWarning("different values specified as annotation for the field.");
+				sourceNode.getNodeFor(annotation).addError("different values specified as annotation for the field.");
+				return;
 			}
 		}
 
@@ -209,45 +201,12 @@ abstract class AbstractAssertionHandler<T extends Annotation> extends AbstractJa
 
 	protected JCMethodInvocation generateCheckMethodCall(JCVariableDecl variable) {
 
-		Map<String, String> additionalCondtionMap;
-		try {
-			additionalCondtionMap = getAdditionalCondtionMap();
-		} catch (AnnotationValueDecodeFail e) {
-			return null;
-		}
-
-		JCExpression[] additionalCondtions = new JCExpression[additionalCondtionMap.size()];
-		int i = 0;
-		for (Entry<String, String> additionalCondtion : additionalCondtionMap.entrySet()) {
-			String representation = additionalCondtion.getValue();
-			if (isLiteral(representation)) {
-				String fieldName = NameResolver.resolveConstantFieldName(variable.vartype.toString(), representation,
-						isBoxedType(variable));
-				if (fieldExists(fieldName, resolveTopTypeNode()) == MemberExistsResult.NOT_EXISTS) return null;
-
-				additionalCondtions[i] = maker.Ident(sourceNode.toName(fieldName));
-
-			} else {
-
-				additionalCondtions[i] = generateNameReference(representation);
-			}
-
-			i++;
-		}
-
 		ListBuffer<JCExpression> arguments = new ListBuffer<JCExpression>();
 		arguments.append(maker.Literal(variable.name.toString()));
 		arguments.append(maker.Ident(variable.name));
-		for (JCExpression condition : additionalCondtions) {
-			arguments.append(condition);
-		}
 
 		return maker.Apply(List.<JCExpression> nil(), generateNameReference(Conditions.class.getName(), getCheckMethodName()),
 				arguments.toList());
-	}
-
-	protected Map<String, String> getAdditionalCondtionMap() {
-		return Collections.emptyMap();
 	}
 
 	protected boolean replaceArgumentAccessWithCheckExpression(List<JCExpression> expressions, JCVariableDecl argument,

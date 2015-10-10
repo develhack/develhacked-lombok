@@ -19,11 +19,9 @@ import lombok.core.AnnotationValues.AnnotationValueDecodeFail;
 import lombok.eclipse.EclipseNode;
 import lombok.eclipse.handlers.EclipseHandlerUtil.MemberExistsResult;
 
-import org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.AbstractVariableDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.AllocationExpression;
 import org.eclipse.jdt.internal.compiler.ast.Annotation;
-import org.eclipse.jdt.internal.compiler.ast.Argument;
 import org.eclipse.jdt.internal.compiler.ast.CastExpression;
 import org.eclipse.jdt.internal.compiler.ast.DoubleLiteral;
 import org.eclipse.jdt.internal.compiler.ast.Expression;
@@ -33,6 +31,7 @@ import org.eclipse.jdt.internal.compiler.ast.IntLiteral;
 import org.eclipse.jdt.internal.compiler.ast.LongLiteral;
 import org.eclipse.jdt.internal.compiler.ast.MessageSend;
 import org.eclipse.jdt.internal.compiler.ast.OperatorIds;
+import org.eclipse.jdt.internal.compiler.ast.SingleNameReference;
 import org.eclipse.jdt.internal.compiler.ast.StringLiteral;
 import org.eclipse.jdt.internal.compiler.ast.TypeReference;
 import org.eclipse.jdt.internal.compiler.ast.UnaryExpression;
@@ -75,9 +74,7 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 				return;
 
 			case ARGUMENT:
-				AbstractMethodDeclaration method = (AbstractMethodDeclaration) variableNode.up().get();
 				preProcess(variable);
-				processArgument(method, (Argument) variable);
 				return;
 
 			default:
@@ -85,20 +82,50 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 		}
 	}
 
+	protected abstract Map<String, String> getAdditionalConditionMap();
+
+	protected boolean isFormula(String representation) {
+
+		if (DATE_TIME_PATTERN.matcher(representation).matches()) return false;
+
+		int length = representation.length();
+		for (int i = 1; i < length; i++) {
+			switch (representation.charAt(i)) {
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+				case '%':
+				case '<':
+				case '>':
+				case '&':
+				case '|':
+				case '^':
+				case '~':
+					return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean isLiteral(String representation) {
+		return !Character.isJavaIdentifierStart(representation.codePointAt(0));
+	}
+
 	@Override
 	protected boolean checkVariableType(AbstractVariableDeclaration variable) {
 
-		Map<String, String> additionalCondtionMap;
+		Map<String, String> additionalConditionMap;
 		try {
-			additionalCondtionMap = getAdditionalCondtionMap();
+			additionalConditionMap = getAdditionalConditionMap();
 		} catch (AnnotationValueDecodeFail e) {
 			return false;
 		}
 
-		for (Entry<String, String> additionalCondtion : additionalCondtionMap.entrySet()) {
-			String representation = additionalCondtion.getValue();
+		for (Entry<String, String> additionalCondition : additionalConditionMap.entrySet()) {
+			String representation = additionalCondition.getValue();
 			if (representation.isEmpty()) {
-				annotationValues.setError(additionalCondtion.getKey(), "must specify the value.");
+				annotationValues.setError(additionalCondition.getKey(), "must specify the value.");
 				return false;
 			}
 		}
@@ -109,21 +136,22 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 	protected void preProcess(AbstractVariableDeclaration variable) {
 
 		if (typeNode == null) return;
+		if (isPrimitiveNumber(variable)) return;
 
-		Map<String, String> additionalCondtionMap;
+		Map<String, String> additionalConditionMap;
 		try {
-			additionalCondtionMap = getAdditionalCondtionMap();
+			additionalConditionMap = getAdditionalConditionMap();
 		} catch (AnnotationValueDecodeFail e) {
 			return;
 		}
 
 		EclipseNode topTypeNode = resolveTopTypeNode();
 
-		for (Entry<String, String> additionalCondition : additionalCondtionMap.entrySet()) {
+		for (Entry<String, String> additionalCondition : additionalConditionMap.entrySet()) {
 
 			String representation = additionalCondition.getValue();
 			if (representation.isEmpty()) continue;
-
+			if (isFormula(representation)) continue;
 			if (!isLiteral(representation)) continue;
 
 			String fieldName = NameResolver.resolveConstantFieldName(toQualifiedName(variable.type.getTypeName()),
@@ -134,20 +162,10 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 
 			try {
 
-				if (isPrimitiveNumber(variable) || isBoxedNumber(variable)) {
+				initialization = isBoxedNumber(variable) ? generatePrimitiveInitializer(representation, variable.type)
+						: generateReferenceTypeInitializer(representation, variable.type);
 
-					initialization = generatePrimitiveInitializer(representation, variable.type);
-
-				} else {
-
-					initialization = generateReferenceTypeInitializer(representation, variable.type);
-				}
-
-				if (initialization == null) {
-					sourceNode.addWarning(String.format("@%s does not support the %s.", getAnnotationName(),
-							variable.type.toString()));
-					return;
-				}
+				if (initialization == null) return;
 
 			} catch (Exception e) {
 
@@ -168,6 +186,77 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 
 			injectFieldAndMarkGenerated(topTypeNode, recursiveSetGeneratedBy(field));
 		}
+	}
+
+	@Override
+	protected MessageSend generateCheckMethodCall(AbstractVariableDeclaration variable) {
+
+		MessageSend checkMethodCall = super.generateCheckMethodCall(variable);
+
+		Map<String, String> additionalConditionMap;
+		try {
+			additionalConditionMap = getAdditionalConditionMap();
+		} catch (AnnotationValueDecodeFail e) {
+			return null;
+		}
+
+		Expression[] additionalConditions = new Expression[additionalConditionMap.size()];
+		int i = 0;
+		for (Entry<String, String> additionalCondition : additionalConditionMap.entrySet()) {
+
+			String representation = additionalCondition.getValue();
+
+			try {
+
+				if (isFormula(representation)) {
+					sourceNode.addWarning(String.format(
+							"@%s does not support the formula representation. you should implement the check statement.",
+							getAnnotationName()));
+					return null;
+				}
+
+				if (!isLiteral(representation)) {
+					additionalConditions[i] = generateNameReference(representation);
+					continue;
+				}
+
+				if (isPrimitiveNumber(variable)) {
+
+					try {
+
+						additionalConditions[i] = generatePrimitiveInitializer(representation, variable.type);
+						continue;
+
+					} catch (Exception e) {
+						annotationValues.setError(additionalCondition.getKey(),
+								String.format("cannot parse as %s.", variable.type.toString()));
+						return null;
+					}
+				}
+
+				String fieldName = NameResolver.resolveConstantFieldName(toQualifiedName(variable.type.getTypeName()),
+						representation, isBoxedType(variable));
+
+				if (fieldExists(fieldName, resolveTopTypeNode()) == MemberExistsResult.NOT_EXISTS) {
+					sourceNode.addWarning(String.format(
+							"@%s does not support the %s. you should implement the check statement.", getAnnotationName(),
+							variable.type.toString()));
+					return null;
+				}
+
+				additionalConditions[i] = new SingleNameReference(fieldName.toCharArray(), p);
+
+			} finally {
+				i++;
+			}
+		}
+
+		Expression[] arguments = Arrays.copyOf(checkMethodCall.arguments, additionalConditions.length + 2);
+		System.arraycopy(additionalConditions, 0, arguments, 2, additionalConditions.length);
+
+		checkMethodCall.arguments = arguments;
+
+		return checkMethodCall;
 	}
 
 	private Expression generatePrimitiveInitializer(String representation, TypeReference ref) {

@@ -7,16 +7,14 @@ class GreaterThanOrEqualTo extends Thread {
       super();
     }
   }
-  private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") int $INT_5 = 5;
   private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") Integer $JAVA_LANG_INTEGER_5 = 5;
-  private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") double $DOUBLE_5 = 5;
   private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") Double $JAVA_LANG_DOUBLE_5 = 5;
   private static final @java.lang.SuppressWarnings("all") @javax.annotation.Generated("lombok") java.util.Date $JAVA_UTIL_DATE_2015_01_01_00_00_00 = new java.text.SimpleDateFormat("yyyy-MM-dd\'T\'HH:mm:ss").parse("2015-01-01T00:00:00", new java.text.ParsePosition(0));
   <clinit>() {
   }
   GreaterThanOrEqualTo(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") int arg1) {
     super();
-    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, $INT_5);
+    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, 5);
     System.out.println(arg1);
   }
   GreaterThanOrEqualTo(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") Integer arg1) {
@@ -26,7 +24,7 @@ class GreaterThanOrEqualTo extends Thread {
   }
   GreaterThanOrEqualTo(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") double arg1) {
     super();
-    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, $DOUBLE_5);
+    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, 5);
     System.out.println(arg1);
   }
   GreaterThanOrEqualTo(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") Double arg1) {
@@ -39,22 +37,22 @@ class GreaterThanOrEqualTo extends Thread {
     System.out.println(arg1);
   }
   GreaterThanOrEqualTo(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") double arg1, @com.develhack.annotation.assertion.GreaterThanOrEqualTo("2015-01-01T00:00:00") java.util.Date arg2) {
-    this(String.valueOf(com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, $DOUBLE_5)));
+    this(String.valueOf(com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, 5)));
     com.develhack.Conditions.checkGreaterThanOrEqualTo("arg2", arg2, $JAVA_UTIL_DATE_2015_01_01_00_00_00);
     System.out.println(arg1);
     System.out.println(arg2);
   }
   GreaterThanOrEqualTo(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") double arg1, @com.develhack.annotation.assertion.GreaterThanOrEqualTo("2015-01-01T00:00:00") java.util.Date arg2, @com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") double sameName) {
     super(String.valueOf(Inner.sameName));
-    com.develhack.Conditions.checkGreaterThanOrEqualTo("sameName", sameName, $DOUBLE_5);
+    com.develhack.Conditions.checkGreaterThanOrEqualTo("sameName", sameName, 5);
     com.develhack.Conditions.checkGreaterThanOrEqualTo("arg2", arg2, $JAVA_UTIL_DATE_2015_01_01_00_00_00);
-    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, $DOUBLE_5);
+    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, 5);
     System.out.println(arg1);
     System.out.println(arg2);
     System.out.println(sameName);
   }
   public void method1(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("5") double arg1) {
-    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, $DOUBLE_5);
+    com.develhack.Conditions.checkGreaterThanOrEqualTo("arg1", arg1, 5);
     System.out.println(arg1);
   }
   public void method2(@com.develhack.annotation.assertion.GreaterThanOrEqualTo("arg2") double arg1, double arg2) {

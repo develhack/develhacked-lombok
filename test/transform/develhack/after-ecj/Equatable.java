@@ -69,7 +69,7 @@ class Equatable {
       int result = 1;
       result = ((result * PRIME) + super.hashCode());
       final java.lang.Object $field = this.field;
-      result = ((result * PRIME) + (($field == null) ? 0 : $field.hashCode()));
+      result = ((result * PRIME) + (($field == null) ? 43 : $field.hashCode()));
       return result;
     }
   }

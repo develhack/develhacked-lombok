@@ -54,7 +54,7 @@ class VO {
 			result = result * PRIME + this.field;
 			result = result * PRIME + this.finalField;
 			final java.lang.Object $exclude = this.exclude;
-			result = result * PRIME + ($exclude == null ? 0 : $exclude.hashCode());
+			result = result * PRIME + ($exclude == null ? 43 : $exclude.hashCode());
 			return result;
 		}
 	}

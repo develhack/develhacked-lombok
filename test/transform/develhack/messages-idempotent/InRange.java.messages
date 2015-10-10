@@ -1,4 +1,4 @@
-67 @InRange does not support the String.
-105 @InRange does not support the Object.
-119 missing the @InRange.
-122 different values specified as annotation for the field.
+46 @InRange does not support the String.
+84 @InRange does not support the Object.
+98 missing the @InRange.
+101 different values specified as annotation for the field.

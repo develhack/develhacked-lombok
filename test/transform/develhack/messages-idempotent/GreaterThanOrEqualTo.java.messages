@@ -1,2 +1,2 @@
-43 @GreaterThanOrEqualTo does not support the String.
-81 @GreaterThanOrEqualTo does not support the Object.
+37 @GreaterThanOrEqualTo does not support the String. you should implement the check statement.
+75 @GreaterThanOrEqualTo does not support the Object. you should implement the check statement.

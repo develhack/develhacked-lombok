@@ -33,6 +33,7 @@ import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCLiteral;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.JCTree.JCNewClass;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.util.List;
@@ -93,12 +94,42 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 		}
 	}
 
+	protected abstract Map<String, String> getAdditionalConditionMap();
+
+	protected boolean isFormula(String representation) {
+
+		if (DATE_TIME_PATTERN.matcher(representation).matches()) return false;
+
+		int length = representation.length();
+		for (int i = 1; i < length; i++) {
+			switch (representation.charAt(i)) {
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+				case '%':
+				case '<':
+				case '>':
+				case '&':
+				case '|':
+				case '^':
+				case '~':
+					return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean isLiteral(String representation) {
+		return !Character.isJavaIdentifierStart(representation.codePointAt(0));
+	}
+
 	@Override
 	protected boolean checkVariableType(JCVariableDecl variable) {
 
 		Map<String, String> additionalCondtionMap;
 		try {
-			additionalCondtionMap = getAdditionalCondtionMap();
+			additionalCondtionMap = getAdditionalConditionMap();
 		} catch (AnnotationValueDecodeFail e) {
 			return false;
 		}
@@ -117,10 +148,11 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 	protected void preProcess(JCVariableDecl variable) {
 
 		if (typeNode == null) return;
+		if (isPrimitiveNumber(variable)) return;
 
 		Map<String, String> additionalCondtionMap;
 		try {
-			additionalCondtionMap = getAdditionalCondtionMap();
+			additionalCondtionMap = getAdditionalConditionMap();
 		} catch (AnnotationValueDecodeFail e) {
 			return;
 		}
@@ -142,20 +174,10 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 
 			try {
 
-				if (isPrimitiveNumber(variable) || isBoxedNumber(variable)) {
+				initialization = isBoxedNumber(variable) ? generatePrimitiveInitializer(representation, variable.vartype)
+						: generateReferenceTypeInitializer(representation, variable.vartype);
 
-					initialization = generatePrimitiveInitializer(representation, variable.vartype);
-
-				} else {
-
-					initialization = generateReferenceTypeInitializer(representation, variable.vartype);
-				}
-
-				if (initialization == null) {
-					sourceNode.addWarning(String.format("@%s does not support the %s.", getAnnotationName(),
-							variable.vartype.toString()));
-					return;
-				}
+				if (initialization == null) return;
 
 			} catch (Exception e) {
 
@@ -170,6 +192,66 @@ abstract class AbstractThresholdAssertionHandler<T extends java.lang.annotation.
 
 			injectFieldAndMarkGenerated(topTypeNode, recursiveSetGeneratedBy(field));
 		}
+	}
+
+	@Override
+	protected JCMethodInvocation generateCheckMethodCall(JCVariableDecl variable) {
+
+		JCMethodInvocation checkMethodCall = super.generateCheckMethodCall(variable);
+
+		Map<String, String> additionalConditionMap;
+		try {
+			additionalConditionMap = getAdditionalConditionMap();
+		} catch (AnnotationValueDecodeFail e) {
+			return null;
+		}
+
+		ListBuffer<JCExpression> arguments = new ListBuffer<JCExpression>();
+		arguments.addAll(checkMethodCall.args);
+		for (Entry<String, String> additionalCondition : additionalConditionMap.entrySet()) {
+
+			String representation = additionalCondition.getValue();
+
+			if (isFormula(representation)) {
+				sourceNode.addWarning(String.format(
+						"@%s does not support the formula representation. you should implement the check statement.",
+						getAnnotationName()));
+				return null;
+			}
+
+			if (!isLiteral(representation)) {
+				arguments.add(generateNameReference(representation));
+				continue;
+			}
+
+			if (isPrimitiveNumber(variable)) {
+
+				try {
+
+					arguments.add(generatePrimitiveInitializer(representation, variable.vartype));
+					continue;
+
+				} catch (Exception e) {
+					annotationValues.setError(additionalCondition.getKey(),
+							String.format("cannot parse as %s.", variable.vartype.toString()));
+					return null;
+				}
+			}
+
+			String fieldName = NameResolver.resolveConstantFieldName(variable.vartype.toString(), representation,
+					isBoxedType(variable));
+
+			if (fieldExists(fieldName, resolveTopTypeNode()) == MemberExistsResult.NOT_EXISTS) {
+				sourceNode.addWarning(String.format("@%s does not support the %s. you should implement the check statement.",
+						getAnnotationName(), variable.vartype.toString()));
+				return null;
+			}
+
+			arguments.add(maker.Ident(sourceNode.toName(fieldName)));
+		}
+
+		checkMethodCall.args = arguments.toList();
+		return checkMethodCall;
 	}
 
 	private JCExpression generatePrimitiveInitializer(String representation, JCExpression ref) {

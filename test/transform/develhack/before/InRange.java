@@ -62,12 +62,12 @@ class InRange extends Thread {
 	@com.develhack.annotation.assertion.InRange(from="-1", to="1")
 	private int hasDifferentValuesOnSetter;
 
-	public void setHasSetter(@com.develhack.annotation.assertion.InRange(from="-1", to="1")int hasSetter) {
+	public void setHasSetter(@com.develhack.annotation.assertion.InRange(from="-1", to="1") int hasSetter) {
 	}
 
 	public void setHasNoAnnotationOnSetter(int hasSetter) {
 	}
 
-	public void setHasDifferentValuesOnSetter(@com.develhack.annotation.assertion.InRange(from="-1", to="2")int hasSetter) {
+	public void setHasDifferentValuesOnSetter(@com.develhack.annotation.assertion.InRange(from="-1", to="2") int hasSetter) {
 	}
 }
