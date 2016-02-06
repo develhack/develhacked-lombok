@@ -115,6 +115,8 @@ abstract class AbstractAssertionHandler<T extends java.lang.annotation.Annotatio
 
 	protected void processArgument(AbstractMethodDeclaration method, Argument argument) {
 
+		if(method == null) return;
+
 		EclipseNode methodNode = sourceNode.getNodeFor(method);
 		if (methodNode == null) return;
 

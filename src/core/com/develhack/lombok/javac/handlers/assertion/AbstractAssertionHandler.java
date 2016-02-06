@@ -117,6 +117,8 @@ abstract class AbstractAssertionHandler<T extends Annotation> extends AbstractJa
 
 	protected void processArgument(JCMethodDecl method, JCVariableDecl argument) {
 
+		if(method == null) return;
+
 		JavacNode methodNode = sourceNode.getNodeFor(method);
 		if (methodNode == null) return;
 
